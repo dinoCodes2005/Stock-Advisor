@@ -1,27 +1,56 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+frontend/node_modules
 
 # next.js
-/.next/
-/out/
+frontend/.next/
+frontend/out/
 
 # production
-/build
+frontend/build
 
 # debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
 
 # env files
 .env*
 
 # vercel
-.vercel
+frontend/.vercel
 
 # typescript
-*.tsbuildinfo
-next-env.d.ts
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+frontend/frontend/node_modules
+
+#backend
+# Ignore Python-related files
+backend/__pycache__/
+backend/**/*.pyc
+backend/*.sqlite3
+backend/db.sqlite3
+
+# Ignore Django migrations
+backend/**/migrations/
+backend/**/migrations/*.pyc
+
+# Ignore environment and virtualenv
+ven/
+backend/ven/
+*.env
+.env
+
+# Ignore logs and static/media files
+backend/static/
+backend/media/
+backend/*.log
+
+# Ignore IDE and OS generated files
+*.vscode/
+*.idea/
+*.DS_Store
+
