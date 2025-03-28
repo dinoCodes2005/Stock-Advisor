@@ -35,6 +35,9 @@ import {
   Target,
 } from "lucide-react";
 import Link from "next/link";
+import { Terminal } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function PreferencesPage() {
   const [investmentAmount, setInvestmentAmount] = useState(5000);
@@ -183,7 +186,13 @@ export default function PreferencesPage() {
                     </div>
                   </CardContent>
                 </Card>
-
+                <Alert>
+                  <Terminal className="h-4 w-4" />
+                  <AlertTitle>Heads up!</AlertTitle>
+                  <AlertDescription>
+                    You can add components to your app using the cli.
+                  </AlertDescription>
+                </Alert>
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-2">
