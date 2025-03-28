@@ -39,10 +39,9 @@ backend/**/migrations/
 backend/**/migrations/*.pyc
 
 # Ignore environment and virtualenv
-ven/
-backend/ven/
-*.env
-.env
+backend/venv/
+backend/*.env
+backend/.env
 
 # Ignore logs and static/media files
 backend/static/
