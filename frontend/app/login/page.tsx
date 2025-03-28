@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import Link from "next/link"
-import { Sparkles } from "lucide-react"
-import { LoginForm } from "@/components/auth/login-form"
-import { RegisterForm } from "@/components/auth/register-form"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
+import { LoginForm } from "@/components/auth/login-form";
+import { RegisterForm } from "@/components/auth/register-form";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function LoginPage() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const [isRegister, setIsRegister] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isRegister, setIsRegister] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsRegister(searchParams.get("register") === "true")
-    setMounted(true)
-  }, [searchParams])
+    setIsRegister(searchParams.get("register") === "true");
+    setMounted(true);
+  }, [searchParams]);
 
   const handleSuccess = () => {
-    router.push("/dashboard")
-  }
+    router.push("/dashboard");
+  };
 
   if (!mounted) {
-    return null
+    return null;
   }
 
   return (
@@ -55,20 +55,30 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {isRegister ? <RegisterForm onSuccess={handleSuccess} /> : <LoginForm onSuccess={handleSuccess} />}
+          {isRegister ? (
+            <RegisterForm onSuccess={handleSuccess} />
+          ) : (
+            <LoginForm onSuccess={handleSuccess} />
+          )}
 
           <div className="text-center text-sm">
             {isRegister ? (
               <p>
                 Already have an account?{" "}
-                <Link href="/login" className="font-medium text-primary hover:underline">
+                <Link
+                  href="/login"
+                  className="font-medium text-primary hover:underline"
+                >
                   Log in
                 </Link>
               </p>
             ) : (
               <p>
                 Don't have an account?{" "}
-                <Link href="/login?register=true" className="font-medium text-primary hover:underline">
+                <Link
+                  href="/login?register=true"
+                  className="font-medium text-primary hover:underline"
+                >
                   Sign up
                 </Link>
               </p>
@@ -77,6 +87,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
