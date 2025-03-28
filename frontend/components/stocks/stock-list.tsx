@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/pagination";
 import { StockDetail } from "@/components/stocks/stock-detail";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 interface Stock {
   symbol: string;
@@ -46,6 +47,73 @@ export function StockList() {
   const [sortField, setSortField] = useState<keyof Stock>("marketCap");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+
+  // const top50Stocks = [
+  //   "AAPL",
+  //   "MSFT",
+  //   "GOOGL",
+  //   "AMZN",
+  //   "META",
+  //   "TSLA",
+  //   "BRK.B",
+  //   "V",
+  //   "JNJ",
+  //   "WMT",
+  //   "JPM",
+  //   "NVDA",
+  //   "PG",
+  //   "HD",
+  //   "DIS",
+  //   "MA",
+  //   "PYPL",
+  //   "NFLX",
+  //   "ADBE",
+  //   "INTC",
+  //   "KO",
+  //   "PEP",
+  //   "CSCO",
+  //   "VZ",
+  //   "MRK",
+  //   "XOM",
+  //   "NKE",
+  //   "PFE",
+  //   "ABT",
+  //   "CRM",
+  //   "ACN",
+  //   "ABBV",
+  //   "T",
+  //   "CVX",
+  //   "MCD",
+  //   "COST",
+  //   "LLY",
+  //   "MDT",
+  //   "CMCSA",
+  //   "TXN",
+  //   "NEE",
+  //   "UNP",
+  //   "BMY",
+  //   "LIN",
+  //   "PM",
+  //   "HON",
+  //   "IBM",
+  //   "GE",
+  //   "ORCL",
+  //   "AMGN",
+  //   "AVGO",
+  // ];
+
+  // const apiKey = "DNybQbLn8OnRbqdemzTIagUxf2A4O3SL";
+  // (async function fetchTop50Stocks() {
+  //   const url = `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?apiKey=${apiKey}`;
+
+  //   try {
+  //     const response = await axios.get(url);
+  //     const data = response.data;
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error("Error fetching top 50 stock data:", error);
+  //   }
+  // })();
 
   // Mock stock data
   const stocks: Stock[] = [

@@ -25,7 +25,7 @@ export default function Navbar() {
           <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/20">
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
-          <span>StockSage AI</span>
+          <span>StockSage</span>
         </Link>
       </div>
 

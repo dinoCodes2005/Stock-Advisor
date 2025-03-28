@@ -87,16 +87,147 @@ export default function DashboardPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="preferences" className="w-full">
+        <Tabs defaultValue="recommendations" className="w-full">
           <TabsList className="grid w-full grid-cols-3 md:w-[600px]">
+            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+
             <TabsTrigger value="preferences">
               Investment Preferences
             </TabsTrigger>
-            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
             <TabsTrigger value="investments">Previous Investments</TabsTrigger>
           </TabsList>
 
           {/* Investment Preferences Tab */}
+
+          <TabsContent value="recommendations" className="mt-6">
+            {showRecommendations ? (
+              <div className="space-y-6">
+                {/* AI-Powered Recommendations */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      <CardTitle>AI-Powered Recommendations</CardTitle>
+                    </div>
+                    <CardDescription>
+                      Based on your preferences, our AI suggests these stocks
+                      for your portfolio.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        {
+                          name: "Microsoft Corp (MSFT)",
+                          price: "$312.45",
+                          change: "+2.1%",
+                          sector: "Technology",
+                          recommendation: "Strong Buy",
+                        },
+                        {
+                          name: "Johnson & Johnson (JNJ)",
+                          price: "$168.22",
+                          change: "+1.5%",
+                          sector: "Healthcare",
+                          recommendation: "Buy",
+                        },
+                        {
+                          name: "Visa Inc (V)",
+                          price: "$245.67",
+                          change: "+0.9%",
+                          sector: "Finance",
+                          recommendation: "Hold",
+                        },
+                        {
+                          name: "Tesla Inc (TSLA)",
+                          price: "$845.50",
+                          change: "+3.2%",
+                          sector: "Automotive",
+                          recommendation: "Strong Buy",
+                        },
+                        {
+                          name: "Procter & Gamble (PG)",
+                          price: "$149.88",
+                          change: "-0.4%",
+                          sector: "Consumer Goods",
+                          recommendation: "Hold",
+                        },
+                      ].map((stock) => (
+                        <div
+                          key={stock.name}
+                          className="flex justify-between items-center border-b pb-4 last:border-b-0"
+                        >
+                          <div>
+                            <h3 className="font-medium">{stock.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              Sector: {stock.sector}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span>{stock.price}</span>
+                            <span
+                              className={
+                                stock.change.startsWith("+")
+                                  ? "text-green-500 text-sm"
+                                  : "text-red-500 text-sm"
+                              }
+                            >
+                              {stock.change}
+                            </span>
+                            <span
+                              className={`mt-1 text-xs px-2 py-1 rounded ${
+                                stock.recommendation === "Strong Buy"
+                                  ? "bg-green-100 text-green-700"
+                                  : stock.recommendation === "Buy"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                              }`}
+                            >
+                              {stock.recommendation}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Explore All Stocks Button */}
+                <div className="flex justify-end">
+                  <Link href="/stocks">
+                    <Button>
+                      Explore All Stocks
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              // No Recommendations Yet
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Sparkles className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-xl font-medium mb-2">
+                  No Recommendations Yet
+                </h3>
+                <p className="text-muted-foreground max-w-md mb-6">
+                  Set your investment preferences first to get personalized
+                  AI-powered stock recommendations.
+                </p>
+                <Button
+                  onClick={() =>
+                    document
+                      .querySelector('[data-value="preferences"]')
+                      ?.click()
+                  }
+                >
+                  Set Preferences
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Recommendations Tab */}
+
           <TabsContent value="preferences" className="mt-6">
             <div className="grid gap-6 md:grid-cols-2">
               {/* Investment Preferences */}
@@ -250,134 +381,6 @@ export default function DashboardPage() {
                 </Card>
               </div>
             </div>
-          </TabsContent>
-
-          {/* Recommendations Tab */}
-          <TabsContent value="recommendations" className="mt-6">
-            {showRecommendations ? (
-              <div className="space-y-6">
-                {/* AI-Powered Recommendations */}
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-primary" />
-                      <CardTitle>AI-Powered Recommendations</CardTitle>
-                    </div>
-                    <CardDescription>
-                      Based on your preferences, our AI suggests these stocks
-                      for your portfolio.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {[
-                        {
-                          name: "Microsoft Corp (MSFT)",
-                          price: "$312.45",
-                          change: "+2.1%",
-                          sector: "Technology",
-                          recommendation: "Strong Buy",
-                        },
-                        {
-                          name: "Johnson & Johnson (JNJ)",
-                          price: "$168.22",
-                          change: "+1.5%",
-                          sector: "Healthcare",
-                          recommendation: "Buy",
-                        },
-                        {
-                          name: "Visa Inc (V)",
-                          price: "$245.67",
-                          change: "+0.9%",
-                          sector: "Finance",
-                          recommendation: "Hold",
-                        },
-                        {
-                          name: "Tesla Inc (TSLA)",
-                          price: "$845.50",
-                          change: "+3.2%",
-                          sector: "Automotive",
-                          recommendation: "Strong Buy",
-                        },
-                        {
-                          name: "Procter & Gamble (PG)",
-                          price: "$149.88",
-                          change: "-0.4%",
-                          sector: "Consumer Goods",
-                          recommendation: "Hold",
-                        },
-                      ].map((stock) => (
-                        <div
-                          key={stock.name}
-                          className="flex justify-between items-center border-b pb-4 last:border-b-0"
-                        >
-                          <div>
-                            <h3 className="font-medium">{stock.name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              Sector: {stock.sector}
-                            </p>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span>{stock.price}</span>
-                            <span
-                              className={
-                                stock.change.startsWith("+")
-                                  ? "text-green-500 text-sm"
-                                  : "text-red-500 text-sm"
-                              }
-                            >
-                              {stock.change}
-                            </span>
-                            <span
-                              className={`mt-1 text-xs px-2 py-1 rounded ${
-                                stock.recommendation === "Strong Buy"
-                                  ? "bg-green-100 text-green-700"
-                                  : stock.recommendation === "Buy"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-yellow-100 text-yellow-700"
-                              }`}
-                            >
-                              {stock.recommendation}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Explore All Stocks Button */}
-                <div className="flex justify-end">
-                  <Link href="/stocks">
-                    <Button>
-                      Explore All Stocks
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              // No Recommendations Yet
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Sparkles className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-medium mb-2">
-                  No Recommendations Yet
-                </h3>
-                <p className="text-muted-foreground max-w-md mb-6">
-                  Set your investment preferences first to get personalized
-                  AI-powered stock recommendations.
-                </p>
-                <Button
-                  onClick={() =>
-                    document
-                      .querySelector('[data-value="preferences"]')
-                      ?.click()
-                  }
-                >
-                  Set Preferences
-                </Button>
-              </div>
-            )}
           </TabsContent>
 
           {/* Previous Investments Tab */}
