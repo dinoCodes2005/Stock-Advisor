@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, Sparkles, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { checkAuthentication } from "@/lib/auth";
 
 export default function DashboardPage() {
+  checkAuthentication();
   const [showRecommendations, setShowRecommendations] = useState(true);
 
   const handlePreferenceSubmit = () => {

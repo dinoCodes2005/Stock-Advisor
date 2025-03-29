@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
@@ -36,12 +36,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Terminal } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { checkAuthentication } from "@/lib/auth";
 
 export default function PreferencesPage() {
   const [investmentAmount, setInvestmentAmount] = useState(5000);
-  const [investmentDuration, setInvestmentDuration] = useState(0);
+  const [investmentDuration, setInvestmentDuration] = useState(5);
   const [riskTolerance, setRiskTolerance] = useState(50);
   const [investmentGoal, setInvestmentGoal] = useState("growth");
   const [investmentFrequency, setInvestmentFrequency] = useState("monthly");
@@ -49,6 +51,8 @@ export default function PreferencesPage() {
   const [enableDiversification, setEnableDiversification] = useState(true);
   const [enableTaxOptimization, setEnableTaxOptimization] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState(false);
+
+  checkAuthentication();
 
   const handleGeneratePlan = () => {
     // In a real app, this would call an API to generate a plan
@@ -138,10 +142,20 @@ export default function PreferencesPage() {
                             id="custom-amount"
                             type="number"
                             className="pl-9"
-                            value={investmentAmount}
-                            onChange={(e) =>
-                              setInvestmentAmount(Number(e.target.value))
+                            value={
+                              investmentAmount === 0 ? "" : investmentAmount
                             }
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === "" || Number(value) < 0) {
+                                setInvestmentAmount(0);
+                              } else {
+                                const numValue = Number(value);
+                                if (!isNaN(numValue) && numValue >= 0) {
+                                  setInvestmentAmount(numValue);
+                                }
+                              }
+                            }}
                           />
                         </div>
                       </div>
@@ -163,15 +177,10 @@ export default function PreferencesPage() {
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <span className="text-sm font-medium">Duration</span>
-                        <Input
-                          type="number"
-                          value={investmentDuration}
-                          onChange={handleInputChange}
-                          min={1}
-                          max={100}
-                          className="w-20 bg-gray-800 text-white text-center rounded-lg"
-                        />
-                        <span className="text-gray-400">years</span>
+
+                        <span className="text-gray-400">
+                          {investmentDuration} years
+                        </span>
                       </div>
                       <Slider
                         value={[investmentDuration]}
@@ -203,6 +212,32 @@ export default function PreferencesPage() {
                             {year} {year === 1 ? "year" : "years"}
                           </Button>
                         ))}
+                      </div>
+                      <div className="pt-2 space-y-4">
+                        <Label htmlFor="custom-duration" className="mt-2">
+                          Custom Duration
+                        </Label>
+                        <Input
+                          id="custom-duration"
+                          type="number"
+                          value={
+                            investmentDuration === 0 ? "" : investmentDuration
+                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "" || Number(value) < 0) {
+                              setInvestmentDuration(0);
+                            } else {
+                              const numValue = Number(value);
+                              if (!isNaN(numValue) && numValue >= 0) {
+                                setInvestmentDuration(numValue);
+                              }
+                            }
+                          }}
+                          min={1}
+                          max={100}
+                          className="w-1/4 bg-gray-950 text-white text-center rounded-lg"
+                        />
                       </div>
                     </div>
                   </CardContent>
