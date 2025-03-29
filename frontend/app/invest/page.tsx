@@ -120,8 +120,8 @@ export default function PreferencesPage() {
                       </div>
                       <Slider
                         value={[investmentAmount]}
-                        min={1000}
-                        max={100000}
+                        min={10}
+                        max={10000000}
                         step={1000}
                         onValueChange={(value) => setInvestmentAmount(value[0])}
                         className="py-4"
