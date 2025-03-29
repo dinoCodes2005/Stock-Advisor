@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import {
   Card,
@@ -16,8 +16,31 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Save } from "lucide-react";
+import { checkAuthentication, isAuthenticated } from "@/lib/auth";
+import { jwtDecode } from "jwt-decode";
+
+interface User {
+  id: string;
+  username: string;
+  email: string;
+}
 
 export default function SettingsPage() {
+  checkAuthentication();
+  const token = localStorage.getItem("token");
+  const decode: string | null = token ? jwtDecode(token) : null;
+  console.log(decode);
+
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    if (decode != null)
+      setUser({
+        id: decode.id,
+        username: decode.username,
+        email: decode.email,
+      });
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = () => {
@@ -56,11 +79,10 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="first-name">First Name</Label>
-                      <Input id="first-name" defaultValue="John" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="last-name">Last Name</Label>
-                      <Input id="last-name" defaultValue="Doe" />
+                      <Input
+                        id="first-name"
+                        defaultValue={`${user?.username}`}
+                      />
                     </div>
                   </div>
 
@@ -69,16 +91,7 @@ export default function SettingsPage() {
                     <Input
                       id="email"
                       type="email"
-                      defaultValue="john.doe@example.com"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      defaultValue="+1 (555) 123-4567"
+                      defaultValue={`${user?.email}`}
                     />
                   </div>
                 </div>

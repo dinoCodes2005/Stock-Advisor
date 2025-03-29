@@ -13,9 +13,20 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { isAuthenticated, logout } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [authenticated, setAuthentication] = useState(isAuthenticated());
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    logout();
+    setTimeout(() => {
+      router.push("/login");
+    }, 100);
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6">
@@ -91,23 +102,36 @@ export default function Navbar() {
             >
               Stocks
             </Link>
-            <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-              <Button variant="ghost" size="sm" className="w-full">
-                Sign In
+            {!authenticated ? (
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                Logout
               </Button>
-            </Link>
+            )}
           </nav>
         </div>
       )}
 
       {/* Desktop Right Section */}
+
       <div className="hidden md:flex items-center gap-2">
         <ThemeToggle />
-        <Link href="/login">
-          <Button variant="ghost" size="sm">
-            Sign In
+        {!authenticated ? (
+          <Link href="/login">
+            <Button variant="ghost" size="sm">
+              Sign In
+            </Button>
+          </Link>
+        ) : (
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
+            Logout
           </Button>
-        </Link>
+        )}
       </div>
     </header>
   );

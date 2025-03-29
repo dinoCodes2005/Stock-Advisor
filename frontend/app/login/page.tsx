@@ -20,7 +20,7 @@ export default function LoginPage() {
   }, [searchParams]);
 
   const handleSuccess = () => {
-    router.push("/dashboard");
+    router.push("/login");
   };
 
   if (!mounted) {
