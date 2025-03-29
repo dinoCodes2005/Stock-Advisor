@@ -29,7 +29,7 @@ import {
   BadgeCheck,
   Calculator,
   Clock,
-  DollarSign,
+  IndianRupee,
   LineChart,
   Sparkles,
   Target,
@@ -41,7 +41,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function PreferencesPage() {
   const [investmentAmount, setInvestmentAmount] = useState(5000);
-  const [investmentDuration, setInvestmentDuration] = useState(5);
+  const [investmentDuration, setInvestmentDuration] = useState(0);
   const [riskTolerance, setRiskTolerance] = useState(50);
   const [investmentGoal, setInvestmentGoal] = useState("growth");
   const [investmentFrequency, setInvestmentFrequency] = useState("monthly");
@@ -56,11 +56,26 @@ export default function PreferencesPage() {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "USD",
+      currency: "INR",
       maximumFractionDigits: 0,
     }).format(value);
+  };
+
+  const handleInputChange = (e) => {
+    let value = e.target.value;
+
+    // Remove leading zero unless the value is '0'
+    if (value.length > 1 && value.startsWith("0")) {
+      value = value.replace(/^0+/, "");
+    }
+
+    // Ensure it's within valid range
+    let numValue = parseInt(value, 10) || 0;
+    if (numValue > 100) numValue = 100;
+
+    setInvestmentDuration(numValue);
   };
 
   return (
@@ -88,7 +103,7 @@ export default function PreferencesPage() {
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-5 w-5 text-primary" />
+                      <IndianRupee className="h-5 w-5 text-primary" />
                       <CardTitle>Investment Amount</CardTitle>
                     </div>
                     <CardDescription>
@@ -112,13 +127,13 @@ export default function PreferencesPage() {
                         className="py-4"
                       />
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>$1,000</span>
-                        <span>$100,000</span>
+                        <span>₹10</span>
+                        <span>₹1,00,00,00,000</span>
                       </div>
                       <div className="pt-2">
                         <Label htmlFor="custom-amount">Custom amount</Label>
                         <div className="relative mt-1">
-                          <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="custom-amount"
                             type="number"
@@ -148,14 +163,20 @@ export default function PreferencesPage() {
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <span className="text-sm font-medium">Duration</span>
-                        <span className="text-sm font-bold">
-                          {investmentDuration} years
-                        </span>
+                        <Input
+                          type="number"
+                          value={investmentDuration}
+                          onChange={handleInputChange}
+                          min={1}
+                          max={100}
+                          className="w-20 bg-gray-800 text-white text-center rounded-lg"
+                        />
+                        <span className="text-gray-400">years</span>
                       </div>
                       <Slider
                         value={[investmentDuration]}
                         min={1}
-                        max={30}
+                        max={100}
                         step={1}
                         onValueChange={(value) =>
                           setInvestmentDuration(value[0])
@@ -164,10 +185,10 @@ export default function PreferencesPage() {
                       />
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>1 year</span>
-                        <span>30 years</span>
+                        <span>100 years</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 pt-2">
-                        {[1, 5, 10].map((year) => (
+                        {[1, 5, 10, 15, 20, 25, 30].map((year) => (
                           <Button
                             key={year}
                             variant={
@@ -186,13 +207,7 @@ export default function PreferencesPage() {
                     </div>
                   </CardContent>
                 </Card>
-                <Alert>
-                  <Terminal className="h-4 w-4" />
-                  <AlertTitle>Heads up!</AlertTitle>
-                  <AlertDescription>
-                    You can add components to your app using the cli.
-                  </AlertDescription>
-                </Alert>
+
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-2">
@@ -356,7 +371,7 @@ export default function PreferencesPage() {
                           Recurring amount
                         </Label>
                         <div className="relative mt-1">
-                          <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="recurring-amount"
                             type="number"
