@@ -18,6 +18,8 @@ import { Separator } from "@/components/ui/separator";
 import { Loader2, Save } from "lucide-react";
 import { checkAuthentication, isAuthenticated } from "@/lib/auth";
 import { jwtDecode } from "jwt-decode";
+import { getUser } from "@/components/api/fetch-user";
+import { string } from "zod";
 
 interface User {
   id: string;
@@ -29,17 +31,21 @@ export default function SettingsPage() {
   checkAuthentication();
   const token = localStorage.getItem("token");
   const decode: string | null = token ? jwtDecode(token) : null;
-  console.log(decode);
 
   const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    if (decode != null)
-      setUser({
-        id: decode.id,
-        username: decode.username,
-        email: decode.email,
-      });
-  }, []);
+  if (decode) {
+    useEffect(() => {
+      (async function fetchUserData() {
+        const userData = await getUser(decode.user_id);
+        setUser({
+          id: userData.id,
+          username: userData.username,
+          email: userData.email,
+        });
+      })();
+    }, []);
+  }
+  console.log(user);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -78,21 +84,14 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="first-name">First Name</Label>
-                      <Input
-                        id="first-name"
-                        defaultValue={`${user?.username}`}
-                      />
+                      <Label htmlFor="first-name">Username</Label>
+                      <Input id="first-name" defaultValue={user?.username} />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      defaultValue={`${user?.email}`}
-                    />
+                    <Input id="email" type="email" defaultValue={user?.email} />
                   </div>
                 </div>
 

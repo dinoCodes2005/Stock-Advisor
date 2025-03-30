@@ -63,7 +63,6 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
       if (response.status === 200) {
         console.log("Success:", response.data);
-        alert("Login successful!");
         localStorage.setItem("token", response.data.token);
         onSuccess(); // Trigger success callback
         router.push("/dashboard"); // Redirect after successful login

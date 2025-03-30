@@ -2,9 +2,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer,LoginSerializer
+from .serializers import RegisterSerializer,LoginSerializer, UserSerializer
 from django.contrib.auth import login
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
 
 
 class RegisterView(APIView):
@@ -48,3 +49,13 @@ class LoginView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GetUserView(APIView):
+    def get(self,request,id):
+        user = User.objects.get(id=id)
+        if user is not None:
+            serializer = UserSerializer(user)
+            return Response(serializer.data,status=200)
+        else :
+            return Response({"Error":"User not found"},status=404)
+        
