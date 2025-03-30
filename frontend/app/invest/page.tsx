@@ -33,15 +33,36 @@ import {
   LineChart,
   Sparkles,
   Target,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { Terminal } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { checkAuthentication } from "@/lib/auth";
+import { checkAuthentication, isAuthenticated } from "@/lib/auth";
+import axios from "axios";
+import { createUser } from "@/components/api/create-user";
+import { create } from "domain";
+import { jwtDecode } from "jwt-decode";
+import { getUser } from "@/components/api/fetch-user";
+
+export interface Investment {
+  id: number;
+  investmentAmount: number;
+  investmentDuration: number;
+  riskTolerance: number;
+  investmentGoal: string;
+  investmentFrequency: string;
+  enableAutoInvest: boolean;
+  enableDiversification: boolean;
+  enableTaxOptimization: boolean;
+}
 
 export default function PreferencesPage() {
+  const router = useRouter();
+  const [userId, setUserId] = useState(0);
+  const [id, setId] = useState(0);
   const [investmentAmount, setInvestmentAmount] = useState(5000);
   const [investmentDuration, setInvestmentDuration] = useState(5);
   const [riskTolerance, setRiskTolerance] = useState(50);
@@ -52,11 +73,41 @@ export default function PreferencesPage() {
   const [enableTaxOptimization, setEnableTaxOptimization] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState(false);
 
+  const token = localStorage.getItem("token");
+  const decode: string | null = token ? jwtDecode(token) : null;
+
   checkAuthentication();
 
-  const handleGeneratePlan = () => {
-    // In a real app, this would call an API to generate a plan
-    setGeneratedPlan(true);
+  useEffect(() => {
+    if (decode) {
+      console.log("Ye mera id hai", decode.user_id);
+      getUser(decode.user_id).then((userData) => {
+        setUserId(userData);
+        setId(decode.user_id);
+      });
+    }
+  }, []);
+
+  const handleGeneratePlan = async () => {
+    const investmentData: Investment = {
+      user: id,
+      investment_amount: investmentAmount,
+      investment_duration: investmentDuration,
+      risk_tolerance: riskTolerance,
+      investment_goal: investmentGoal,
+      investment_frequency: investmentFrequency,
+      enable_auto_invest: enableAutoInvest,
+      enable_diversification: enableDiversification,
+      enable_tax_optimization: enableTaxOptimization,
+    };
+    console.log(investmentData);
+    const response: Investment = await createUser(investmentData);
+    if (response) {
+      setGeneratedPlan(true);
+      router.push("/recommendations");
+    } else {
+      console.error("Error");
+    }
   };
 
   const formatCurrency = (value: number) => {
