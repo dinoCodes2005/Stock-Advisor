@@ -33,17 +33,11 @@ import {
   LineChart,
   Sparkles,
   Target,
-  User,
 } from "lucide-react";
 import Link from "next/link";
-import { Terminal } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { checkAuthentication, isAuthenticated } from "@/lib/auth";
-import axios from "axios";
+import { checkAuthentication } from "@/lib/auth";
 import { createUser } from "@/components/api/create-user";
-import { create } from "domain";
 import { jwtDecode } from "jwt-decode";
 import { getUser } from "@/components/api/fetch-user";
 
@@ -71,7 +65,7 @@ export default function PreferencesPage() {
   const [enableAutoInvest, setEnableAutoInvest] = useState(false);
   const [enableDiversification, setEnableDiversification] = useState(true);
   const [enableTaxOptimization, setEnableTaxOptimization] = useState(false);
-  const [generatedPlan, setGeneratedPlan] = useState(false);
+  const [generatedPlan, setGeneratedPlan] = useState(true);
 
   const token = localStorage.getItem("token");
   const decode: string | null = token ? jwtDecode(token) : null;
@@ -127,7 +121,7 @@ export default function PreferencesPage() {
     }
 
     // Ensure it's within valid range
-    let numValue = parseInt(value, 10) || 0;
+    let numValue = Number.parseInt(value, 10) || 0;
     if (numValue > 100) numValue = 100;
 
     setInvestmentDuration(numValue);
@@ -818,6 +812,163 @@ export default function PreferencesPage() {
                 </Button>
               </div>
             )}
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold tracking-tight mb-6">
+                Previous Investment Plans
+              </h2>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {[
+                  {
+                    id: 1,
+                    name: "Growth Portfolio 2024",
+                    date: "Mar 15, 2024",
+                    amount: 25000,
+                    duration: 10,
+                    risk: "Moderate",
+                    return: 12.4,
+                    status: "Active",
+                  },
+                  {
+                    id: 2,
+                    name: "Retirement Fund",
+                    date: "Jan 5, 2024",
+                    amount: 50000,
+                    duration: 25,
+                    risk: "Balanced",
+                    return: 8.7,
+                    status: "Active",
+                  },
+                  {
+                    id: 3,
+                    name: "Short-term Savings",
+                    date: "Nov 20, 2023",
+                    amount: 10000,
+                    duration: 3,
+                    risk: "Conservative",
+                    return: 5.2,
+                    status: "Completed",
+                  },
+                  {
+                    id: 4,
+                    name: "Tech Sector Focus",
+                    date: "Sep 8, 2023",
+                    amount: 15000,
+                    duration: 7,
+                    risk: "Aggressive",
+                    return: 18.9,
+                    status: "Active",
+                  },
+                  {
+                    id: 5,
+                    name: "Dividend Income",
+                    date: "Jul 12, 2023",
+                    amount: 30000,
+                    duration: 12,
+                    risk: "Moderate",
+                    return: 7.5,
+                    status: "Active",
+                  },
+                  {
+                    id: 6,
+                    name: "Emergency Fund",
+                    date: "Apr 3, 2023",
+                    amount: 8000,
+                    duration: 2,
+                    risk: "Conservative",
+                    return: 4.1,
+                    status: "Completed",
+                  },
+                ].map((plan) => (
+                  <Card
+                    key={plan.id}
+                    className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 hover:scale-[1.02] group"
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="group-hover:text-primary transition-colors">
+                            {plan.name}
+                          </CardTitle>
+                          <CardDescription>
+                            Created on {plan.date}
+                          </CardDescription>
+                        </div>
+                        <div
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            plan.status === "Active"
+                              ? "bg-green-500/10 text-green-500"
+                              : "bg-blue-500/10 text-blue-500"
+                          }`}
+                        >
+                          {plan.status}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pb-3">
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">Amount</p>
+                            <p className="font-medium">
+                              {formatCurrency(plan.amount)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Duration</p>
+                            <p className="font-medium">{plan.duration} years</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">
+                              Risk Profile
+                            </p>
+                            <p className="font-medium">{plan.risk}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Return</p>
+                            <p className="font-medium text-green-500">
+                              +{plan.return}%
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="pt-2">
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-muted-foreground">
+                              Performance
+                            </span>
+                            <span className="font-medium">
+                              {Math.round((plan.return / 20) * 100)}%
+                            </span>
+                          </div>
+                          <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-500 group-hover:from-primary/90 group-hover:to-primary"
+                              style={{
+                                width: `${Math.round(
+                                  (plan.return / 20) * 100
+                                )}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between pt-0">
+                      <Button variant="ghost" size="sm" className="text-xs">
+                        View Details
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                      >
+                        Manage Plan
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

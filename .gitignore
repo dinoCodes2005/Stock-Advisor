@@ -37,6 +37,7 @@ backend/db.sqlite3
 # Ignore Django migrations
 backend/**/migrations/
 backend/**/migrations/*.pyc
+backend/file.csv
 
 # Ignore environment and virtualenv
 backend/venv/
