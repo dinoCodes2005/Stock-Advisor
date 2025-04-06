@@ -61,13 +61,19 @@ export default function PreferencesPage() {
   const [investmentFrequency, setInvestmentFrequency] = useState("monthly");
   const [volatile, setVolatile] = useState(0.5);
   const [generatedPlan, setGeneratedPlan] = useState(true);
-
-  const token = localStorage.getItem("token")
-    ? localStorage.getItem("token")
-    : null;
-  const decode: string | null = token ? jwtDecode(token) : null;
+  const [token, setToken] = useState("");
+  const [decode, setDecode] = useState<any>(null);
 
   checkAuthentication();
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    if (localToken) {
+      setToken(localToken);
+      const decoded = jwtDecode(localToken);
+      setDecode(decoded);
+    }
+  }, []);
 
   useEffect(() => {
     if (decode) {
@@ -77,7 +83,7 @@ export default function PreferencesPage() {
         setId(decode.user_id);
       });
     }
-  }, []);
+  }, [decode]);
 
   const handleGeneratePlan = async () => {
     const investmentData: Investment = {
