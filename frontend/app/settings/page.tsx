@@ -28,9 +28,17 @@ interface User {
 }
 
 export default function SettingsPage() {
+  const [token, setToken] = useState("");
+  const [decode, setDecode] = useState<any>(null);
   checkAuthentication();
-  const token = localStorage.getItem("token");
-  const decode: string | null = token ? jwtDecode(token) : null;
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    if (localToken) {
+      setToken(localToken);
+      const decoded = jwtDecode(localToken);
+      setDecode(decoded);
+    }
+  }, []);
 
   const [user, setUser] = useState<User | null>(null);
   if (decode) {
