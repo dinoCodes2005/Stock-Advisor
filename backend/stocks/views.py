@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .ml_model import StockRecommender
 import json
+from datetime import datetime, timedelta
+from . import data
 
 # Expanded list of NSE stocks to consider
 NSE_SYMBOLS = [
@@ -32,21 +34,43 @@ def get_top_10_stocks(request):
         TOP_10_COMPANIES = NSE_SYMBOLS[:10]
         stock_data = {}
 
+        from_date = (datetime.today() - timedelta(days=1)).strftime("%d-%m-%Y")
+        to_date = datetime.today().strftime("%d-%m-%Y")
+
         for symbol in TOP_10_COMPANIES:
-            data = capital_market.index_data(symbol)
+            df = data.get_stock_return_df(symbol, from_date, to_date)
+
+            if df.empty:
+                print(f"⚠️ No data for {symbol}")
+                stock_data[symbol] = {
+                    "symbol": symbol,
+                    "lastPrice": 0,
+                    "open": 0,
+                    "high": 0,
+                    "low": 0,
+                    "previousClose": 0,
+                    "returnPercent": 0
+                }
+                continue
+
+            latest = df.iloc[-1]
+            previous = df.iloc[-2] if len(df) > 1 else {}
+
             stock_data[symbol] = {
                 "symbol": symbol,
-                "lastPrice": data.get("last", 0),
-                "open": data.get("open", 0),
-                "high": data.get("high", 0),
-                "low": data.get("low", 0),
-                "previousClose": data.get("previousClose", 0),
+                "lastPrice": latest.get("Close Price", 0),
+                "open": latest.get("Open Price", 0),
+                "high": latest.get("High Price", 0),
+                "low": latest.get("Low Price", 0),
+                "previousClose": previous.get("Close Price", 0) if previous is not None else 0,
+                "returnPercent": latest.get("Return %", 0)
             }
 
         return Response({"data": stock_data})
     except Exception as e:
+        print("❌ Exception:", e)
         return Response({"error": str(e)}, status=500)
-
+    
 class StockRecommendationView(APIView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

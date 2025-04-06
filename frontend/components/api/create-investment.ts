@@ -8,6 +8,8 @@ export async function createInvestment(investmentData: Investment) {
       investmentData
     );
 
+    // const suggestion = await axios.post()
+
     if (response.status >= 200 && response.status < 300) {
       console.log("Investment created successfully:", response.data);
       return response.data; // Return the generated plan

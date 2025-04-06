@@ -90,17 +90,6 @@ export default function DashboardPage() {
 
         {/* Tabs */}
         <Tabs defaultValue="recommendations" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 md:w-[600px]">
-            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-
-            <TabsTrigger value="preferences">
-              Investment Preferences
-            </TabsTrigger>
-            <TabsTrigger value="investments">Previous Investments</TabsTrigger>
-          </TabsList>
-
-          {/* Investment Preferences Tab */}
-
           <TabsContent value="recommendations" className="mt-6">
             {showRecommendations ? (
               <div className="space-y-6">

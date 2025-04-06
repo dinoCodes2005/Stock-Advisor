@@ -143,10 +143,11 @@ def calculate_risk_tolerance(Symbol,index,from_date,to_date):
 # print(get_market_sensitivity("HDFCBANK","NIFTY 50","26-03-2024","26-03-2025"))
 # print(maximum_drawdown("HDFCBANK","28-03-2024", "28-03-2025"))
 # show(get_stock_return_df("HDFCBANK","28-03-2024", "28-03-2025"))
-print(calculate_risk_tolerance("RELIANCE","NIFTY 50","26-03-2024","26-03-2025"))
+# print(calculate_risk_tolerance("RELIANCE","NIFTY 50","26-03-2024","26-03-2025"))
 
 
 
+# get_stock_return_df("RELIANCE","26-03-2024","26-03-2025")
 
 
 

@@ -32,6 +32,7 @@ import { StockDetail } from "@/components/stocks/stock-detail";
 import { StockCandlestickChart } from "@/components/stocks/stock-candlestick-chart";
 import { motion, AnimatePresence } from "framer-motion";
 import useWebSocket from "@/hooks/web-socket";
+import { fetchTop10Stocks } from "@/hooks/fetch-latest-stock";
 
 // Update the Stock interface to match the WebSocket data format
 interface Stock {
@@ -151,7 +152,8 @@ const fallbackData: Record<string, Stock> = {
 
 // Update the component to use the WebSocket data or fallback data
 export function StockList() {
-  const realtimeData = useWebSocket("ws://localhost:8000/ws/data/");
+  // const realtimeData = useWebSocket("ws://localhost:8000/ws/data/");
+  const realtimeData = fetchTop10Stocks();
   const [sortField, setSortField] = useState<keyof Stock>("lastPrice");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
@@ -160,12 +162,12 @@ export function StockList() {
   const [chartStock, setChartStock] = useState<Stock | null>(null);
   const [isChartOpen, setIsChartOpen] = useState(false);
 
-  useEffect(() => {
-    console.log("Realtime Data", realtimeData);
-    if (realtimeData?.data && Object.keys(realtimeData.data).length > 0) {
-      setStockData(realtimeData.data);
-    }
-  }, [realtimeData]);
+  // useEffect(() => {
+  //    console.log("Realtime Data", realtimeData);
+  //   if (realtimeData?.data && Object.keys(realtimeData.data).length > 0) {
+  //     setStockData(realtimeData.data);
+  //   }
+  // }, [realtimeData]);
 
   const handleSort = (field: keyof Stock) => {
     if (sortField === field) {

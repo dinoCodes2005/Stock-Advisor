@@ -1,5 +1,5 @@
 import logging
-from ml_model import StockRecommender
+from .ml_model import StockRecommender
 import schedule
 import time
 import pandas as pd

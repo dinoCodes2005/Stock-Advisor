@@ -43,13 +43,10 @@ import { getUser } from "@/components/api/fetch-user";
 
 export interface Investment {
   user?: number;
-  investment_amount: number;
+  monthly_investment: number;
   investment_duration: number;
-  risk_tolerance: string;
-  investment_goal: number;
-  investment_frequency: string;
-  rtsScore: number;
-  volatile: number;
+  target_amount: number;
+  rts_score: number;
 }
 
 export default function PreferencesPage() {
@@ -83,13 +80,10 @@ export default function PreferencesPage() {
   const handleGeneratePlan = async () => {
     const investmentData: Investment = {
       user: id,
-      investment_amount: investmentAmount,
+      monthly_investment: investmentAmount,
       investment_duration: investmentDuration,
-      risk_tolerance: riskTolerance,
-      investment_goal: investmentGoal,
-      investment_frequency: investmentFrequency,
-      rtsScore: rtsScore,
-      volatile: volatile,
+      target_amount: investmentGoal, // assuming "target_amount" = "investmentGoal"
+      rts_score: rtsScore,
     };
     console.log(investmentData);
     const response: Investment = await createInvestment(investmentData);
@@ -150,10 +144,10 @@ export default function PreferencesPage() {
                   <CardHeader>
                     <div className="flex items-center gap-2">
                       <IndianRupee className="h-5 w-5 text-primary" />
-                      <CardTitle>Investment Amount</CardTitle>
+                      <CardTitle>Monthly Investment Amount</CardTitle>
                     </div>
                     <CardDescription>
-                      How much are you planning to invest initially?
+                      How much are you planning to invest monthly?
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -174,7 +168,7 @@ export default function PreferencesPage() {
                       />
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>₹10</span>
-                        <span>₹1,00,00,00,000</span>
+                        <span>₹10,00,000</span>
                       </div>
                       <div className="pt-2">
                         <Label htmlFor="custom-amount">Custom amount</Label>
@@ -284,7 +278,9 @@ export default function PreferencesPage() {
                     </div>
                   </CardContent>
                 </Card>
+              </div>
 
+              <div className="space-y-6">
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-2 mb-2">
@@ -317,55 +313,6 @@ export default function PreferencesPage() {
                   </CardHeader>
                   <CardContent></CardContent>
                 </Card>
-              </div>
-
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-2">
-                      <LineChart className="h-5 w-5 text-primary" />
-                      <CardTitle>Risk Tolerance</CardTitle>
-                    </div>
-                    <CardDescription>
-                      How much risk are you comfortable taking with your
-                      investments?
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <span className="text-sm font-medium">Risk Level</span>
-                      </div>
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Conservative</span>
-                        <span>Moderate</span>
-                        <span>Aggressive</span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 pt-2">
-                        {[
-                          { label: "Low Risk", value: "low" },
-                          { label: "Balanced", value: "medium" },
-                          { label: "High Risk", value: "high" },
-                        ].map((option) => (
-                          <Button
-                            key={option.label}
-                            size="sm"
-                            variant={
-                              riskTolerance === option.value
-                                ? "default"
-                                : "outline"
-                            }
-                            onClick={() => setRiskTolerance(option.value)}
-                            className="w-full"
-                          >
-                            {option.label}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-2">
@@ -374,40 +321,59 @@ export default function PreferencesPage() {
                     </div>
                     <CardDescription>
                       Relative Total Shareholder Return <br />
-                      How you want your investment to perform compare to the
-                      market ?
+                      How you want your investment to perform compared to the
+                      market?
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      {/* Score Display */}
                       <div className="flex justify-between">
-                        <span className="text-sm font-medium">Performance</span>
-                        <span className="text-sm font-bold">
-                          {rtsScore < -5
-                            ? "Underperforming"
-                            : rtsScore < 5
-                            ? "In Line"
-                            : "Outperforming"}
-                        </span>
+                        <span className="text-sm font-bold">{rtsScore}</span>
                       </div>
+
+                      {/* Slider */}
                       <Slider
                         value={[rtsScore]}
-                        min={-20}
-                        max={20}
+                        min={0}
+                        max={100}
                         step={1}
                         onValueChange={(value) => setRtsScore(value[0])}
                         className="py-4"
                       />
+
+                      {/* Slider Labels */}
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>Underperforming</span>
                         <span>In Line</span>
                         <span>Outperforming</span>
                       </div>
+
+                      {/* Input Field */}
+                      <Input
+                        id="custom-rts"
+                        type="number"
+                        className="pl-9"
+                        value={rtsScore === 0 ? "" : rtsScore}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "" || Number(value) < 0) {
+                            setRtsScore(0);
+                          } else {
+                            const numValue = Number(value);
+                            if (!isNaN(numValue) && numValue >= 0) {
+                              setRtsScore(numValue);
+                            }
+                          }
+                        }}
+                      />
+
+                      {/* Preset Buttons */}
                       <div className="grid grid-cols-3 gap-2 pt-2">
                         {[
-                          { label: "Low", value: -10 },
-                          { label: "Market Avg", value: 0 },
-                          { label: "High", value: 10 },
+                          { label: "Low", value: 0 },
+                          { label: "Market Avg", value: 50 },
+                          { label: "High", value: 100 },
                         ].map((option) => (
                           <Button
                             key={option.label}
@@ -423,109 +389,6 @@ export default function PreferencesPage() {
                             {option.label}
                           </Button>
                         ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5 text-primary" />
-                      <CardTitle>Investment Frequency</CardTitle>
-                    </div>
-                    <CardDescription>
-                      How often would you like to contribute to your
-                      investments?
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Select
-                      value={investmentFrequency}
-                      onValueChange={setInvestmentFrequency}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select frequency" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="one-time">
-                          One-time investment
-                        </SelectItem>
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                        <SelectItem value="quarterly">Quarterly</SelectItem>
-                        <SelectItem value="annually">Annually</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    {investmentFrequency !== "one-time" && (
-                      <div className="mt-4">
-                        <Label htmlFor="recurring-amount">
-                          Recurring amount
-                        </Label>
-                        <div className="relative mt-1">
-                          <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            id="recurring-amount"
-                            type="number"
-                            className="pl-9"
-                            placeholder="500"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-2">
-                      <LineChart className="h-5 w-5 text-primary" />
-                      <CardTitle>Volatility Comfort</CardTitle>
-                    </div>
-                    <CardDescription>
-                      How much do you want your stock to deviate from the market
-                      ?
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <span className="text-sm font-medium">Range</span>
-                        <span className="text-sm font-bold">{volatile}</span>
-                      </div>
-                      <Slider
-                        value={[volatile]}
-                        min={0}
-                        max={1}
-                        step={0.1}
-                        onValueChange={(value) => setVolatile(value[0])}
-                        className="py-4"
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>0</span>
-                        <span>1</span>
-                      </div>
-                      <div className="pt-2">
-                        <Label htmlFor="custom-amount">Custom Volatility</Label>
-                        <div className="relative mt-1">
-                          <Input
-                            id="custom-amount"
-                            type="number"
-                            className="pl-9"
-                            value={volatile === 0 ? "" : volatile}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (value === "" || Number(value) < 0) {
-                                setVolatile(0);
-                              } else {
-                                const numValue = Number(value);
-                                if (!isNaN(numValue) && numValue >= 0) {
-                                  setVolatile(numValue);
-                                }
-                              }
-                            }}
-                          />
-                        </div>
                       </div>
                     </div>
                   </CardContent>

@@ -427,7 +427,7 @@ class StockRecommender:
         
         try:
             for category in categories:
-                recommender = StockRecommender(model_dir=f'models/{category}')
+                recommender = StockRecommender(model_dir=f'stocks/models/{category}')
                 if recommender.is_trained:
                     try:
                         category_recommendations = recommender.get_recommendations(

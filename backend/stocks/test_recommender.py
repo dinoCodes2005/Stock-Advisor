@@ -7,7 +7,7 @@ import os
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def test_stock_recommender():
+def test_stock_recommender(rts_score,target_amount,monthly_investment,investment_duration):
     """Test the stock recommendation system"""
     try:
         # First ensure models are trained
@@ -16,10 +16,10 @@ def test_stock_recommender():
         
         # Test parameters
         test_params = {
-            'rts_score': 75,  # High risk tolerance
-            'target_amount': 1000000,  # 10 Lakh target
-            'monthly_investment': 50000,  # 50k monthly investment
-            'investment_duration': 60  # 5 years
+            'rts_score': rts_score,  # High risk tolerance
+            'target_amount': target_amount,  # 10 Lakh target
+            'monthly_investment': monthly_investment,  # 50k monthly investment
+            'investment_duration': investment_duration  # 5 years
         }
         
         logger.info("\nTesting individual category recommendations:")
