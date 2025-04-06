@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from .views import CreateInvestment
+from .views import CreateInvestment , RecommendationsByInvestment
 
 
 urlpatterns = [
     path('create/',CreateInvestment.as_view(),name="handle-investment"),
+    path("recommendations/<int:investment_id>/", RecommendationsByInvestment.as_view(), name="recommendations-by-investment"),
+    # path("/<int:id>/",GetInvestment.as_view(),name = "get-investment"),
 ]

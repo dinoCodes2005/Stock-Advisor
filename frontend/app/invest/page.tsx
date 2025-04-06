@@ -89,7 +89,7 @@ export default function PreferencesPage() {
     const response: Investment = await createInvestment(investmentData);
     if (response) {
       setGeneratedPlan(true);
-      router.push("/recommendations");
+      router.push(`/recommendations/${response.investment_id}`);
     } else {
       console.error("Error");
     }

@@ -16,6 +16,7 @@ import {
   Bell,
   Sparkles,
   IndianRupee,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -49,7 +50,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Invest", href: "/invest", icon: IndianRupee },
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
     { name: "Stocks", href: "/stocks", icon: TrendingUp },
-    // { name: "Real-time Data", href: "/realtime", icon: LineChart },
+    { name: "Consult with AI", href: "/ai", icon: Bot },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
 
