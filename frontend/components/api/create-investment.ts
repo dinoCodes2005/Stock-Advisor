@@ -4,7 +4,7 @@ import axios from "axios";
 export async function createInvestment(investmentData: Investment) {
   try {
     const response = await axios.post(
-      "http://127.0.0.1:8000/investment/create/",
+      "https://stock-advisor.onrender.com/investment/create/",
       investmentData
     );
 

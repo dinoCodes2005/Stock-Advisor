@@ -5,7 +5,9 @@ import { NextResponse } from "next/server";
 
 export async function getUser(id: number) {
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/investment/${id}/`);
+    const response = await axios.get(
+      `https://stock-advisor.onrender.com/investment/${id}/`
+    );
 
     if (response.status == 200) {
       return response.data;

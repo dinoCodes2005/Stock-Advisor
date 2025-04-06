@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-y2)(re&ts)q&meh_=#x8zpn3ez!kyxc4p1m#5ekrodonbkhezo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["stock-advisor.onrender.com"]
 
 
 # Application definition
@@ -87,7 +87,8 @@ SOCIALACCOUNT_PROVIDERS = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:8000"
+    "http://localhost:8000",
+    "https://stock-advisor-lac.vercel.app"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

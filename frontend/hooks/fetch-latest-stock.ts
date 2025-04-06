@@ -11,7 +11,9 @@ export interface Stock {
 
 export async function fetchTop10Stocks(): Promise<Record<string, Stock>> {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/stocks/api/top10/");
+    const response = await axios.get(
+      "https://stock-advisor.onrender.com/stocks/api/top10/"
+    );
     console.log(response.data);
     return response.data.data; // returns stock_data object
   } catch (error) {

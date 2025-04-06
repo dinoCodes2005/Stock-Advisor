@@ -60,7 +60,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/accounts/register/",
+        "https://stock-advisor.onrender.com/accounts/register/",
         {
           username: data.name,
           email: data.email,
