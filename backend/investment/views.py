@@ -84,8 +84,8 @@ class CreateInvestment(APIView):
 
                 for rec in all_recommendations:
                     stock_info = format_stock_data(rec)
-                    # suggestion = generate_suggestion(stock_info)
-                    suggestion = "suggestion"
+                    suggestion = generate_suggestion(stock_info)
+                    # suggestion = "suggestion"
 
                     Recommendation.objects.create(
                         investment=investment,

@@ -24,13 +24,14 @@ export default function StockChat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
     if (!input.trim()) return;
 
     const userMessage = { role: "user", content: input };
@@ -51,6 +52,15 @@ export default function StockChat() {
     }
   };
 
+  const handleSuggestionClick = (text: string) => {
+    setInput(text);
+    setTimeout(() => {
+      if (formRef.current) {
+        formRef.current.requestSubmit();
+      }
+    }, 100);
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -65,7 +75,7 @@ export default function StockChat() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-xl flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-blue-500" />
-                    Stock Intelligence Assistant
+                    Ask Gemini AI
                   </CardTitle>
                   <CardDescription>
                     Ask about stock performance, market trends, investment
@@ -88,22 +98,18 @@ export default function StockChat() {
                             any stock, market trends, or investment strategies.
                           </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full max-w-md mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-1/3 mt-4">
                           {[
-                            "What's happening with AAPL today?",
-                            "Explain P/E ratio",
-                            "Should I invest in tech stocks?",
-                            "Compare MSFT and GOOGL",
+                            "What's happening with RELIANCE today?",
+                            "Explain EPS and P/E ratio",
+                            "Should I invest in Indian banking stocks?",
+                            "Compare TCS and INFY",
                           ].map((suggestion) => (
                             <Button
                               key={suggestion}
                               variant="outline"
-                              className="justify-start text-left h-auto py-2 px-3 text-sm hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:hover:text-blue-400"
-                              onClick={() => {
-                                setInput(suggestion);
-                                const form = document.querySelector("form");
-                                if (form) form.requestSubmit();
-                              }}
+                              className="w-full h-auto py-3 px-4 text-sm text-left justify-start whitespace-normal hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:hover:text-blue-400"
+                              onClick={() => handleSuggestionClick(suggestion)}
                             >
                               {suggestion}
                             </Button>
@@ -139,6 +145,7 @@ export default function StockChat() {
                 </CardContent>
                 <CardFooter>
                   <form
+                    ref={formRef}
                     onSubmit={handleSubmit}
                     className="flex w-full space-x-2"
                   >
