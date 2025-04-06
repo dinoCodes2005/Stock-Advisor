@@ -37,20 +37,19 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { checkAuthentication } from "@/lib/auth";
-import { createUser } from "@/components/api/create-user";
+import { createInvestment } from "@/components/api/create-investment";
 import { jwtDecode } from "jwt-decode";
 import { getUser } from "@/components/api/fetch-user";
 
 export interface Investment {
-  id: number;
-  investmentAmount: number;
-  investmentDuration: number;
-  riskTolerance: number;
-  investmentGoal: string;
-  investmentFrequency: string;
-  enableAutoInvest: boolean;
-  enableDiversification: boolean;
-  enableTaxOptimization: boolean;
+  user?: number;
+  investment_amount: number;
+  investment_duration: number;
+  risk_tolerance: string;
+  investment_goal: number;
+  investment_frequency: string;
+  rtsScore: number;
+  volatile: number;
 }
 
 export default function PreferencesPage() {
@@ -58,13 +57,12 @@ export default function PreferencesPage() {
   const [userId, setUserId] = useState(0);
   const [id, setId] = useState(0);
   const [investmentAmount, setInvestmentAmount] = useState(5000);
+  const [rtsScore, setRtsScore] = useState(0.5);
   const [investmentDuration, setInvestmentDuration] = useState(5);
-  const [riskTolerance, setRiskTolerance] = useState(50);
-  const [investmentGoal, setInvestmentGoal] = useState("growth");
+  const [riskTolerance, setRiskTolerance] = useState("low");
+  const [investmentGoal, setInvestmentGoal] = useState(10000);
   const [investmentFrequency, setInvestmentFrequency] = useState("monthly");
-  const [enableAutoInvest, setEnableAutoInvest] = useState(false);
-  const [enableDiversification, setEnableDiversification] = useState(true);
-  const [enableTaxOptimization, setEnableTaxOptimization] = useState(false);
+  const [volatile, setVolatile] = useState(0.5);
   const [generatedPlan, setGeneratedPlan] = useState(true);
 
   const token = localStorage.getItem("token");
@@ -90,12 +88,11 @@ export default function PreferencesPage() {
       risk_tolerance: riskTolerance,
       investment_goal: investmentGoal,
       investment_frequency: investmentFrequency,
-      enable_auto_invest: enableAutoInvest,
-      enable_diversification: enableDiversification,
-      enable_tax_optimization: enableTaxOptimization,
+      rtsScore: rtsScore,
+      volatile: volatile,
     };
     console.log(investmentData);
-    const response: Investment = await createUser(investmentData);
+    const response: Investment = await createInvestment(investmentData);
     if (response) {
       setGeneratedPlan(true);
       router.push("/recommendations");
@@ -290,66 +287,35 @@ export default function PreferencesPage() {
 
                 <Card>
                   <CardHeader>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <Target className="h-5 w-5 text-primary" />
                       <CardTitle>Investment Goal</CardTitle>
                     </div>
                     <CardDescription>
-                      What is your primary investment objective?
+                      What is your target amount?
                     </CardDescription>
+                    <div className="relative mt-1">
+                      <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="custom-amount"
+                        type="number"
+                        className="pl-9"
+                        value={investmentGoal === 0 ? "" : investmentGoal}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "" || Number(value) < 0) {
+                            setInvestmentGoal(0);
+                          } else {
+                            const numValue = Number(value);
+                            if (!isNaN(numValue) && numValue >= 0) {
+                              setInvestmentGoal(numValue);
+                            }
+                          }
+                        }}
+                      />
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <RadioGroup
-                      value={investmentGoal}
-                      onValueChange={setInvestmentGoal}
-                      className="space-y-3"
-                    >
-                      {[
-                        {
-                          value: "growth",
-                          label: "Growth",
-                          description:
-                            "Focus on long-term capital appreciation",
-                        },
-                        {
-                          value: "income",
-                          label: "Income",
-                          description: "Focus on generating regular income",
-                        },
-                        {
-                          value: "balanced",
-                          label: "Balanced",
-                          description: "Balance between growth and income",
-                        },
-                        {
-                          value: "preservation",
-                          label: "Preservation",
-                          description:
-                            "Focus on preserving capital with minimal risk",
-                        },
-                      ].map((goal) => (
-                        <div
-                          key={goal.value}
-                          className="flex items-start space-x-2"
-                        >
-                          <RadioGroupItem
-                            value={goal.value}
-                            id={goal.value}
-                            className="mt-1"
-                          />
-                          <Label
-                            htmlFor={goal.value}
-                            className="flex flex-col cursor-pointer"
-                          >
-                            <span className="font-medium">{goal.label}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {goal.description}
-                            </span>
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  </CardContent>
+                  <CardContent></CardContent>
                 </Card>
               </div>
 
@@ -369,22 +335,7 @@ export default function PreferencesPage() {
                     <div className="space-y-4">
                       <div className="flex justify-between">
                         <span className="text-sm font-medium">Risk Level</span>
-                        <span className="text-sm font-bold">
-                          {riskTolerance < 30
-                            ? "Conservative"
-                            : riskTolerance < 70
-                            ? "Moderate"
-                            : "Aggressive"}
-                        </span>
                       </div>
-                      <Slider
-                        value={[riskTolerance]}
-                        min={0}
-                        max={100}
-                        step={1}
-                        onValueChange={(value) => setRiskTolerance(value[0])}
-                        className="py-4"
-                      />
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>Conservative</span>
                         <span>Moderate</span>
@@ -392,19 +343,81 @@ export default function PreferencesPage() {
                       </div>
                       <div className="grid grid-cols-3 gap-2 pt-2">
                         {[
-                          { label: "Low Risk", value: 20 },
-                          { label: "Balanced", value: 50 },
-                          { label: "High Risk", value: 80 },
+                          { label: "Low Risk", value: "low" },
+                          { label: "Balanced", value: "medium" },
+                          { label: "High Risk", value: "high" },
+                        ].map((option) => (
+                          <Button
+                            key={option.label}
+                            size="sm"
+                            variant={
+                              riskTolerance === option.value
+                                ? "default"
+                                : "outline"
+                            }
+                            onClick={() => setRiskTolerance(option.value)}
+                            className="w-full"
+                          >
+                            {option.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <LineChart className="h-5 w-5 text-primary" />
+                      <CardTitle>RTS Score</CardTitle>
+                    </div>
+                    <CardDescription>
+                      Relative Total Shareholder Return <br />
+                      How you want your investment to perform compare to the
+                      market ?
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Performance</span>
+                        <span className="text-sm font-bold">
+                          {rtsScore < -5
+                            ? "Underperforming"
+                            : rtsScore < 5
+                            ? "In Line"
+                            : "Outperforming"}
+                        </span>
+                      </div>
+                      <Slider
+                        value={[rtsScore]}
+                        min={-20}
+                        max={20}
+                        step={1}
+                        onValueChange={(value) => setRtsScore(value[0])}
+                        className="py-4"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Underperforming</span>
+                        <span>In Line</span>
+                        <span>Outperforming</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 pt-2">
+                        {[
+                          { label: "Low", value: -10 },
+                          { label: "Market Avg", value: 0 },
+                          { label: "High", value: 10 },
                         ].map((option) => (
                           <Button
                             key={option.label}
                             variant={
-                              Math.abs(riskTolerance - option.value) < 15
+                              Math.abs(rtsScore - option.value) < 5
                                 ? "default"
                                 : "outline"
                             }
                             size="sm"
-                            onClick={() => setRiskTolerance(option.value)}
+                            onClick={() => setRtsScore(option.value)}
                             className="w-full"
                           >
                             {option.label}
@@ -463,61 +476,56 @@ export default function PreferencesPage() {
                     )}
                   </CardContent>
                 </Card>
-
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-2">
-                      <BadgeCheck className="h-5 w-5 text-primary" />
-                      <CardTitle>Additional Options</CardTitle>
+                      <LineChart className="h-5 w-5 text-primary" />
+                      <CardTitle>Volatility Comfort</CardTitle>
                     </div>
                     <CardDescription>
-                      Customize your investment strategy with these options.
+                      How much do you want your stock to deviate from the market
+                      ?
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="auto-invest">Auto-invest</Label>
-                          <p className="text-xs text-muted-foreground">
-                            Automatically invest based on your preferences
-                          </p>
-                        </div>
-                        <Switch
-                          id="auto-invest"
-                          checked={enableAutoInvest}
-                          onCheckedChange={setEnableAutoInvest}
-                        />
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Range</span>
+                        <span className="text-sm font-bold">{volatile}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="diversification">
-                            Portfolio diversification
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            Spread investments across different asset classes
-                          </p>
-                        </div>
-                        <Switch
-                          id="diversification"
-                          checked={enableDiversification}
-                          onCheckedChange={setEnableDiversification}
-                        />
+                      <Slider
+                        value={[volatile]}
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        onValueChange={(value) => setVolatile(value[0])}
+                        className="py-4"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0</span>
+                        <span>1</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="tax-optimization">
-                            Tax optimization
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            Optimize investments for tax efficiency
-                          </p>
+                      <div className="pt-2">
+                        <Label htmlFor="custom-amount">Custom Volatility</Label>
+                        <div className="relative mt-1">
+                          <Input
+                            id="custom-amount"
+                            type="number"
+                            className="pl-9"
+                            value={volatile === 0 ? "" : volatile}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === "" || Number(value) < 0) {
+                                setVolatile(0);
+                              } else {
+                                const numValue = Number(value);
+                                if (!isNaN(numValue) && numValue >= 0) {
+                                  setVolatile(numValue);
+                                }
+                              }
+                            }}
+                          />
                         </div>
-                        <Switch
-                          id="tax-optimization"
-                          checked={enableTaxOptimization}
-                          onCheckedChange={setEnableTaxOptimization}
-                        />
                       </div>
                     </div>
                   </CardContent>
