@@ -156,3 +156,4 @@ wordcloud==1.9.4
 wsproto==1.2.0
 yfinance==0.2.55
 zope.interface==7.2
+gunicorn==21.2.0
